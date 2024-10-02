@@ -1,3 +1,4 @@
+import { voiceRouter } from "@/server/api/routers/voiceRouter";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**
@@ -6,7 +7,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  // Add your routers here
+  voice: voiceRouter
 });
 
 // export type definition of API
