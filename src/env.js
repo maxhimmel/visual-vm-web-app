@@ -26,6 +26,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     SINCH_APP_KEY: z.string(),
     SINCH_APP_SECRET: z.string(),
+    SINCH_PHONE_NUMBER: z.string(),
   },
 
   /**
@@ -50,6 +51,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     SINCH_APP_KEY: process.env.SINCH_APP_KEY,
     SINCH_APP_SECRET: process.env.SINCH_APP_SECRET,
+    SINCH_PHONE_NUMBER: process.env.SINCH_PHONE_NUMBER,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

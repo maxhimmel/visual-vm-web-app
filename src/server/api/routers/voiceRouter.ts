@@ -14,14 +14,11 @@ export const voiceRouter = createTRPCRouter({
                 applicationSecret: env.SINCH_APP_SECRET,
             });
 
-            const sinchNumber = "+anon";
-            const vmNumber = "+anon";
-
             const response = await sinchClient.voice.callouts.tts({
                 ttsCalloutRequestBody: {
                     method: "ttsCallout",
                     ttsCallout: {
-                        cli: sinchNumber,
+                        cli: env.SINCH_PHONE_NUMBER,
                         destination: {
                             type: "number",
                             endpoint: vmNumber,
