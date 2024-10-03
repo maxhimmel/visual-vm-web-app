@@ -44,7 +44,7 @@ export const voiceRouter = createTRPCRouter({
                 customCalloutRequestBody: {
                     method: "customCallout",
                     customCallout: {
-                        cli: sinchNumber,
+                        cli: env.SINCH_PHONE_NUMBER,
                         // dtmf: "",
                         destination: {
                             type: "number",
