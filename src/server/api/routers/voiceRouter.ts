@@ -81,10 +81,6 @@ export const voiceRouter = createTRPCRouter({
                 }
             });
 
-            // sinchClient.conversation.webhooks.create({
-            //     webhookCreateRequestBody: {
-            //         client_credentials: {}
-            //     }
-            // });
+            return { callId: response.callId };
         })
 });
