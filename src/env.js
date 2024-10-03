@@ -27,6 +27,8 @@ export const env = createEnv({
     SINCH_APP_KEY: z.string(),
     SINCH_APP_SECRET: z.string(),
     SINCH_PHONE_NUMBER: z.string(),
+    TWILIO_ACCOUNT_SID: z.string(),
+    TWILIO_AUTH_TOKEN: z.string(),
   },
 
   /**
@@ -52,6 +54,8 @@ export const env = createEnv({
     SINCH_APP_KEY: process.env.SINCH_APP_KEY,
     SINCH_APP_SECRET: process.env.SINCH_APP_SECRET,
     SINCH_PHONE_NUMBER: process.env.SINCH_PHONE_NUMBER,
+    TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
