@@ -1,83 +1,56 @@
 import { env } from "@/env";
-import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { SinchClient, Voice } from "@sinch/sdk-core";
+import { Twilio, twiml as TWIML } from "twilio";
+import { RecordingInstance } from "twilio/lib/rest/api/v2010/account/recording";
+
+const vmNumber = "anon";
 
 export const voiceRouter = createTRPCRouter({
-    ttsCall: protectedProcedure
-        .input(z.object({
-            text: z.string()
-        }))
+    testCall: protectedProcedure
         .query(async ({ ctx, input }) => {
-            const sinchClient = new SinchClient({
-                applicationKey: env.SINCH_APP_KEY,
-                applicationSecret: env.SINCH_APP_SECRET,
+            const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
+
+            const twiml = new TWIML.VoiceResponse();
+            twiml.play({
+                digits: "ww9" // (wait 0.5 + 0.5 seconds then play '9' dtmf tone)
+            });
+            twiml.gather({
+                input: ["speech"],
+                speechTimeout: "auto",
+                hints: "Record this starting now",
+            });
+            twiml.record({
+                transcribe: true,
+                trim: "trim-silence",
+                // playBeep: false,
+                maxLength: 120 // Twilio's max transcription length
+            });
+            twiml.say("good job with number 1");
+
+            twiml.play({
+                digits: "ww9" // (wait 0.5 + 0.5 seconds then play '9' dtmf tone)
+            });
+            twiml.gather({
+                input: ["speech"],
+                speechTimeout: "auto",
+                hints: "Record this starting now",
+            });
+            twiml.record({
+                transcribe: true,
+                trim: "trim-silence",
+                // playBeep: false,
+                maxLength: 120 // Twilio's max transcription length
+            });
+            twiml.say("good job with number 2. goodbye.");
+
+            const call = await client.calls.create({
+                from: env.TWILIO_PHONE_NUMBER,
+                to: vmNumber,
+                twiml
+            }, (error, call) => {
+                console.log({ error, call });
             });
 
-            const response = await sinchClient.voice.callouts.tts({
-                ttsCalloutRequestBody: {
-                    method: "ttsCallout",
-                    ttsCallout: {
-                        cli: env.SINCH_PHONE_NUMBER,
-                        destination: {
-                            type: "number",
-                            endpoint: vmNumber,
-                        },
-                        text: input.text,
-                    },
-                },
-            });
-
-            console.log(JSON.stringify(response));
-
-            return { callId: response.callId };
+            return call;
         }),
-
-    testVoice: protectedProcedure
-        .query(async ({ ctx }) => {
-            const sinchClient = new SinchClient({
-                applicationKey: env.SINCH_APP_KEY,
-                applicationSecret: env.SINCH_APP_SECRET,
-            });
-
-            const response = await sinchClient.voice.callouts.custom({
-                customCalloutRequestBody: {
-                    method: "customCallout",
-                    customCallout: {
-                        cli: env.SINCH_PHONE_NUMBER,
-                        // dtmf: "",
-                        destination: {
-                            type: "number",
-                            endpoint: vmNumber,
-                        },
-                        ace: JSON.stringify(new Voice.AceSvamletBuilder()
-                            .addInstruction(Voice.aceInstructionHelper.say("Howdy there, bud."))
-                            .setAction(Voice.aceActionHelper.continue())
-                            .build()),
-                    }
-                }
-            });
-
-            await sinchClient.voice.calls.update({
-                callId: response.callId as string,
-                updateCallRequestBody: {
-                    instructions: [
-                        Voice.svamlInstructionHelper.buildSay("well hello again.")
-                    ],
-                    action: Voice.svamlActionHelper.buildContinue()
-                }
-            });
-
-            await sinchClient.voice.calls.update({
-                callId: response.callId as string,
-                updateCallRequestBody: {
-                    instructions: [
-                        Voice.svamlInstructionHelper.buildSay("and now we're done. goodbye.")
-                    ],
-                    action: Voice.svamlActionHelper.buildHangup()
-                }
-            });
-
-            return { callId: response.callId };
-        })
 });

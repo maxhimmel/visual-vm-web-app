@@ -11,28 +11,12 @@ export default async function Home() {
                 "use server";
 
                 console.log("Dialing voicemail...");
-                await api.voice.ttsCall({
-                  text: "Hello, Bah-tee, happy birthday. You are my best bah-tee. I love you.",
-                });
+                await api.voice.testCall();
                 console.log("Voicemail dialed.");
               }}
             >
               <button type="submit" className="btn btn-lg">
                 Dial Voicemail
-              </button>
-            </form>
-
-            <form
-              action={async (formData) => {
-                "use server";
-
-                console.log("Testing custom call...");
-                await api.voice.testVoice();
-                console.log("Custom call complete.");
-              }}
-            >
-              <button type="submit" className="btn btn-lg">
-                Custom Dial
               </button>
             </form>
           </div>
