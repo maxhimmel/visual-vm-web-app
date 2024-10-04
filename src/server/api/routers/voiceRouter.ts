@@ -53,4 +53,28 @@ export const voiceRouter = createTRPCRouter({
 
             return call;
         }),
+
+    getRecordings: protectedProcedure
+        .query(async ({ ctx }) => {
+            const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
+
+            const recordingData = [] as {
+                recording: RecordingInstance,
+                transcript: string
+            }[];
+
+            const recordings = await client.recordings.list();
+            for (const r of recordings) {
+                const recObj = { recording: r, transcript: "" };
+
+                const transcriptionData = await r.transcriptions().list();
+                for (const t of transcriptionData) {
+                    recObj.transcript += t.transcriptionText;
+                }
+
+                recordingData.push(recObj);
+            }
+
+            return recordingData;
+        }),
 });
