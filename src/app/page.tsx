@@ -23,7 +23,7 @@ export default async function Home() {
             </form>
 
             <div>
-              <h2>Recordings</h2>
+              <h2 className="text-4xl">Recordings</h2>
               <ul className="space-y-4">
                 {recordings.map((recording) => (
                   <li key={recording.recording.sid}>
