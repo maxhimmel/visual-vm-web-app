@@ -1,46 +1,120 @@
+import { SignedIn } from "@/app/_components/signedIn";
+import { SignedOut } from "@/app/_components/signedOut";
+import { getServerAuthSession } from "@/server/auth";
 import { api, HydrateClient } from "@/trpc/server";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
 export default async function Home() {
-  const recordings = await api.voice.getRecordings();
-
   return (
     <HydrateClient>
       <main>
         <div className="hero">
           <div className="hero-content flex flex-col">
-            <form
-              action={async (formData) => {
-                "use server";
-
-                console.log("Dialing voicemail...");
-                await api.voice.testCall();
-                console.log("Voicemail dialed.");
-              }}
-            >
-              <button type="submit" className="btn btn-lg">
-                Dial Voicemail
-              </button>
-            </form>
-
-            <div>
-              <h2 className="text-4xl">Recordings</h2>
-              <ul className="space-y-4">
-                {recordings.map((recording) => (
-                  <li key={recording.recording.sid}>
-                    <audio controls>
-                      <source
-                        src={recording.recording.mediaUrl}
-                        type="audio/mp3"
-                      />
-                    </audio>
-                    <code>{recording.transcript}</code>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <h1 className="text-6xl">Welcome to Viz Voicemail</h1>
+            <SignedOutPrompt />
+            <SignedInPrompt />
           </div>
         </div>
       </main>
     </HydrateClient>
   );
 }
+
+function SignedOutPrompt() {
+  return (
+    <SignedOut>
+      <p className="text-lg">Login or sign up to get started.</p>
+      <Link className="btn btn-lg" href="/api/auth/signin">
+        Login
+      </Link>
+    </SignedOut>
+  );
+}
+
+async function SignedInPrompt() {
+  const session = await getServerAuthSession();
+  const voicemail =
+    session && session.user ? await api.account.getVoicemail() : null;
+
+  return (
+    <SignedIn>
+      {voicemail ? (
+        <Link href="/vm" className="btn btn-lg">
+          View voicemails
+        </Link>
+      ) : (
+        <form
+          className="flex flex-col gap-4"
+          action={async (formData) => {
+            "use server";
+
+            let { userNumber, vmNumber, vmPin } = voicemailFormSchema.parse(
+              Object.fromEntries(formData),
+            );
+
+            userNumber = userNumber.replaceAll("-", "");
+            vmNumber = vmNumber.replaceAll("-", "");
+
+            await api.account.setVoicemail({
+              userNumber,
+              voicemailNumber: vmNumber,
+              voicemailPin: vmPin,
+            });
+
+            redirect("/vm");
+          }}
+        >
+          <label>
+            Your phone number:
+            <br />
+            <i>Format (123-456-7890)</i>
+            <br />
+            <input
+              type="tel"
+              id="userNumber"
+              name="userNumber"
+              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              minLength={12}
+              maxLength={12}
+              required
+            />
+          </label>
+
+          <label>
+            Voicemail number:
+            <br />
+            <i>Format (123-456-7890)</i>
+            <br />
+            <input
+              type="tel"
+              id="vmNumber"
+              name="vmNumber"
+              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              minLength={12}
+              maxLength={12}
+              required
+            />
+          </label>
+
+          <label>
+            Voicemail pin:
+            <br />
+            <input type="password" id="vmPin" name="vmPin" required />
+          </label>
+
+          <button type="submit" className="btn btn-lg">
+            Submit
+          </button>
+        </form>
+      )}
+    </SignedIn>
+  );
+}
+
+const voicemailFormSchema = z.object({
+  userNumber: z.string().length(12),
+  vmNumber: z.string().length(12),
+  vmPin: z.string(),
+});
