@@ -29,7 +29,7 @@ export default async function Voicemails() {
                   <li key={recording.recording.sid}>
                     <audio controls>
                       <source
-                        src={recording.recording.mediaUrl}
+                        src={`${recording.recording.mediaUrl}.mp3`}
                         type="audio/mp3"
                       />
                     </audio>
