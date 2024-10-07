@@ -14,8 +14,9 @@ const recordingCallbackSchema = z.object({
 
 export async function POST(request: NextRequest) {
     const formData = await request.formData();
-    const body = Object.fromEntries(formData);
-    const data = recordingCallbackSchema.parse(body);
+    const data = recordingCallbackSchema.parse(
+        Object.fromEntries(formData)
+    );
 
     console.log(data);
 
