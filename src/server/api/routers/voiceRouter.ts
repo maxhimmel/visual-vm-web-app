@@ -48,7 +48,7 @@ export const voiceRouter = createTRPCRouter({
 
             await client.calls.create({
                 from: env.TWILIO_PHONE_NUMBER,
-                to: vmNumber,
+                to: `+1${ctx.voicemail?.userNumber}`,
                 twiml,
 
                 // machineDetectionSpeechEndThreshold,
