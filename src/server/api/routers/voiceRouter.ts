@@ -49,7 +49,11 @@ export const voiceRouter = createTRPCRouter({
             await client.calls.create({
                 from: env.TWILIO_PHONE_NUMBER,
                 to: vmNumber,
-                twiml
+                twiml,
+
+                // machineDetectionSpeechEndThreshold,
+                // machineDetection,
+                // machineDetectionSpeechThreshold
             }, (error, call) => {
                 console.log({ error, call });
             });
