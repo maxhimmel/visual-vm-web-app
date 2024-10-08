@@ -18,6 +18,11 @@ export async function POST(request: NextRequest) {
         Object.fromEntries(formData)
     );
 
+    // retrieve call sid from db
+
+    // update call recording log using call sid to make new entry for
+    // user in db
+    // client.calls.get(data.CallSid).recordings
     console.log(data);
 
     return new Response(null, { status: 204 });
