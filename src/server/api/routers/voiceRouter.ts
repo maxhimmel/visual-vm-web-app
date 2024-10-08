@@ -125,7 +125,14 @@ export const voiceRouter = createTRPCRouter({
                 // machineDetectionSpeechThreshold
             });
 
-            return call;
+            const log = await ctx.db.callLog.create({
+                data: {
+                    callId: call.sid,
+                    userId: ctx.session.user.id,
+                }
+            });
+
+            return log;
         })
 });
 

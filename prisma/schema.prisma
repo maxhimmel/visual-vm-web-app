@@ -47,6 +47,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     voicemail     Voicemail?
+    callLogs      CallLog[]
 }
 
 model VerificationToken {
@@ -65,4 +66,11 @@ model Voicemail {
     vmPin      String?
     User       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId     String  @unique @db.ObjectId
+}
+
+model CallLog {
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    callId String
+    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique @db.ObjectId
 }
