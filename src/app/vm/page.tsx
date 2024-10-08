@@ -13,7 +13,7 @@ export default async function Voicemails() {
                 "use server";
 
                 console.log("Dialing voicemail...");
-                await api.voice.testCall();
+                await api.voice.dialVoicemail();
                 console.log("Voicemail dialed.");
               }}
             >
