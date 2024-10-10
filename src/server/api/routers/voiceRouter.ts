@@ -57,11 +57,12 @@ export const voiceRouter = createTRPCRouter({
                 userNumber: ctx.voicemail?.userNumber as string,
                 vmPin: ctx.voicemail?.vmPin as string
             });
-            twiml = TwimlHelpers.record({
-                twiml,
-                gatherDelay: 2,
-                gatherHints: "new message",
-                recordingAction: `${env.API_URL}/webhooks/delete-voicemail`
+
+            twiml.gather({
+                input: ["speech"],
+                speechTimeout: "1",
+                hints: "received, at",
+                action: `${env.API_URL}/webhooks/log-date`,
             });
 
             const call = await client.calls.create({

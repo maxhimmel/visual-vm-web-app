@@ -4,20 +4,16 @@ import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
 import { z } from "zod";
 
-const recordingCallback = `${env.API_URL}/webhooks/record`;
-const transcriptionCallback = `${env.API_URL}/webhooks/transcribe`;
-
-const recordRequestSchema = z.object({
+const gatherRequestSchema = z.object({
     CallSid: z.string(),
-    RecordingUrl: z.string(),
-    RecordingDuration: z.number({ coerce: true }),
-    Digits: z.string().optional(),
+    SpeechResult: z.string(),
+    Confidence: z.number({ coerce: true }).optional(),
 });
 
 export async function POST(request: NextRequest) {
     const formData = await request.formData();
 
-    const data = recordRequestSchema.safeParse(
+    const data = gatherRequestSchema.safeParse(
         Object.fromEntries(formData)
     );
 
@@ -29,14 +25,19 @@ export async function POST(request: NextRequest) {
 
     let twiml = new TWIML.VoiceResponse();
 
-    twiml = TwimlHelpers.deleteVm({ twiml });
-
-    twiml.gather({
-        input: ["speech"],
-        speechTimeout: "auto",
-        hints: "message marked for deletion, new message, received, at",
-        action: `${env.API_URL}/webhooks/log-date`,
-    });
+    if (data.data.SpeechResult.includes("main menu")) {
+        twiml.hangup();
+    }
+    else {
+        twiml.record({
+            recordingStatusCallback: `${env.API_URL}/webhooks/record`,
+            maxLength: 120, // Twilio's max transcription length.
+            playBeep: false,
+            transcribe: true,
+            trim: "trim-silence",
+            action: `${env.API_URL}/webhooks/delete-voicemail`,
+        });
+    }
 
     return new Response(
         twiml.toString(),

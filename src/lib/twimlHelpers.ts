@@ -43,7 +43,7 @@ export class TwimlHelpers {
 
     static deleteVm({ twiml }: { twiml: TWIML.VoiceResponse }) {
         twiml.play({
-            digits: `7w`,
+            digits: `7`,
         });
 
         return twiml;
