@@ -82,6 +82,3 @@ export const voiceRouter = createTRPCRouter({
             return log;
         })
 });
-
-const saveVm = "1";
-const deleteVm = "7";
