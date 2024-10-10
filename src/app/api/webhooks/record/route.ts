@@ -6,10 +6,10 @@ const recordingCallbackSchema = z.object({
     RecordingUrl: z.string(),
     RecordingStatus: z.enum(["completed", "failed"]),
     CallSid: z.string(),
-    RecordingStartTime: z.date(),
-    RecordingDuration: z.number(),
+    RecordingStartTime: z.string(),
+    RecordingDuration: z.string(),
     AccountSid: z.string(),
-    ErrorCode: z.number(),
+    ErrorCode: z.string(),
 });
 
 export async function POST(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     // update call recording log using call sid to make new entry for
     // user in db
     // client.calls.get(data.CallSid).recordings
-    console.log(data);
+    console.log("recording", data);
 
     return new Response(null, { status: 204 });
 }
