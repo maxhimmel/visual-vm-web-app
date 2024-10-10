@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     console.log({ rawForm: formData, parsedForm: data });
 
     if (!data?.success) {
+        console.error("Invalid form data:", data?.error);
         return new Response(null, { status: 400 });
     }
 

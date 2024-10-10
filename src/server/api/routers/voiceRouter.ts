@@ -74,8 +74,8 @@ export const voiceRouter = createTRPCRouter({
 
             const log = await ctx.db.callLog.create({
                 data: {
-                    callId: call.sid,
                     userId: ctx.session.user.id,
+                    callId: call.sid,
                 }
             });
 

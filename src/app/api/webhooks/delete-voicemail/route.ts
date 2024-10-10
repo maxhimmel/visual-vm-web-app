@@ -4,9 +4,6 @@ import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
 import { z } from "zod";
 
-const recordingCallback = `${env.API_URL}/webhooks/record`;
-const transcriptionCallback = `${env.API_URL}/webhooks/transcribe`;
-
 const recordRequestSchema = z.object({
     CallSid: z.string(),
     RecordingUrl: z.string(),
@@ -24,6 +21,7 @@ export async function POST(request: NextRequest) {
     console.log({ rawForm: formData, parsedForm: data });
 
     if (!data?.success) {
+        console.error("Invalid form data:", data?.error);
         return new Response(null, { status: 400 });
     }
 
