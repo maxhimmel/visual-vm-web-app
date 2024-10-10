@@ -1,10 +1,10 @@
 import { env } from "@/env";
+import { TwimlHelpers } from "@/lib/twimlHelpers";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { Twilio, twiml as TWIML } from "twilio";
 import { RecordingInstance } from "twilio/lib/rest/api/v2010/account/recording";
 
-const vmNumber = "anon";
-const recordingCallback = "ngrok";
+const apiDomain = "ngrok";
 
 export const voiceRouter = createTRPCRouter({
     callUser: protectedProcedure
@@ -52,42 +52,25 @@ export const voiceRouter = createTRPCRouter({
         .mutation(async ({ ctx }) => {
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
-            // TODO: How do we loop this twiml until the voicemail is empty?
-            const twiml = new TWIML.VoiceResponse();
+            let twiml = new TWIML.VoiceResponse();
 
-            twiml.play({
-                digits: `w${ctx.voicemail?.userNumber}#w${ctx.voicemail?.vmPin}#`
+            twiml = TwimlHelpers.loginVm({
+                twiml,
+                userNumber: ctx.voicemail?.userNumber as string,
+                vmPin: ctx.voicemail?.vmPin as string
             });
-
-            twiml.gather({
-                input: ["speech"],
-                speechTimeout: "auto",
-                hints: "New message"
+            twiml = TwimlHelpers.record({
+                twiml,
+                gatherDelay: 2,
+                gatherHints: "new message",
+                recordingAction: `${apiDomain}/api/webhooks/delete-voicemail`
             });
-
-            twiml.record({
-                recordingStatusCallback: recordingCallback,
-                maxLength: 120, // Twilio's max transcription length.
-                playBeep: false,
-                transcribe: true,
-                trim: "trim-silence",
-            });
-
-            twiml.play({
-                digits: `${deleteVm}w`
-            });
-
-            twiml.hangup();
 
             const call = await client.calls.create({
                 from: env.TWILIO_PHONE_NUMBER,
                 to: `+1${ctx.voicemail?.vmNumber}`,
                 twiml,
-
-                //// These are interesting ...
-                // machineDetectionSpeechEndThreshold,
-                // machineDetection,
-                // machineDetectionSpeechThreshold
+                // timeLimit: 180, // for testing to make sure it doesn't run forever
             });
 
             const log = await ctx.db.callLog.create({
