@@ -7,55 +7,20 @@ const vmNumber = "anon";
 const recordingCallback = "ngrok";
 
 export const voiceRouter = createTRPCRouter({
-    testCall: protectedProcedure
+    callUser: protectedProcedure
         .mutation(async ({ ctx }) => {
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
             const twiml = new TWIML.VoiceResponse();
-            twiml.play({
-                digits: "ww9" // (wait 0.5 + 0.5 seconds then play '9' dtmf tone)
-            });
-            twiml.gather({
-                input: ["speech"],
-                speechTimeout: "auto",
-                hints: "Record this starting now",
-            });
-            twiml.record({
-                transcribe: true,
-                trim: "trim-silence",
-                // playBeep: false,
-                maxLength: 120, // Twilio's max transcription length
-                recordingStatusCallback: recordingCallback
-            });
-            twiml.say("good job with number 1. bye bye.");
 
-            // twiml.play({
-            //     digits: "ww9" // (wait 0.5 + 0.5 seconds then play '9' dtmf tone)
-            // });
-            // twiml.gather({
-            //     input: ["speech"],
-            //     speechTimeout: "auto",
-            //     hints: "Record this starting now",
-            // });
-            // twiml.record({
-            //     transcribe: true,
-            //     trim: "trim-silence",
-            //     // playBeep: false,
-            //     maxLength: 120, // Twilio's max transcription length
-            //     recordingStatusCallback: recordingCallback
-            // });
-            // twiml.say("good job with number 2. goodbye.");
+            twiml.pause({ length: 12 });
+            twiml.say("I am leaving me a voicemail. Rabbits with Alice in Wonderland. No internet lifestyle, baby.");
+            twiml.hangup();
 
             await client.calls.create({
                 from: env.TWILIO_PHONE_NUMBER,
                 to: `+1${ctx.voicemail?.userNumber}`,
                 twiml,
-
-                // machineDetectionSpeechEndThreshold,
-                // machineDetection,
-                // machineDetectionSpeechThreshold
-            }, (error, call) => {
-                console.log({ error, call });
             });
         }),
 
