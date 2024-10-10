@@ -33,8 +33,6 @@ export async function POST(request: NextRequest) {
     else {
         const approxDate = parseDate(data.data.SpeechResult);
 
-        console.log({ approxDate });
-
         // we don't need to wait for this to finish ...
         db.callLog.update({
             where: {
@@ -65,7 +63,12 @@ export async function POST(request: NextRequest) {
 function parseDate(gatherData: string) {
     const token = "received";
     const receivedIndex = gatherData.indexOf(token);
-    const approxDate = gatherData.slice(receivedIndex + token.length).trim();
+    let approxDate = gatherData.slice(receivedIndex + token.length).trim();
+
+    // replace "today" within the string with the current date
+    if (approxDate.includes("today")) {
+        approxDate = approxDate.replace("today", new Date().toLocaleDateString());
+    }
 
     return approxDate;
 }
