@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
     let twiml = new TWIML.VoiceResponse();
 
     if (data.data.SpeechResult.includes("main menu")) {
+        console.log("hanging up. goodbye.");
         twiml.hangup();
     }
     else {
