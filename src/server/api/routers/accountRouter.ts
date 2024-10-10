@@ -1,4 +1,6 @@
+import { env } from "@/env";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { Twilio } from "twilio";
 import { z } from "zod";
 
 export const accountRouter = createTRPCRouter({
@@ -24,5 +26,33 @@ export const accountRouter = createTRPCRouter({
             });
 
             return newVm;
-        })
+        }),
+
+    deleteVoicemail: protectedProcedure
+        .input(z.object({
+            recordingId: z.string()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
+
+            const recording = await client.recordings(input.recordingId).fetch();
+            const transcriptions = await recording.transcriptions().list();
+
+            await recording.remove();
+            for (const t of transcriptions) {
+                await t.remove();
+            }
+
+            const callId = recording.callSid;
+            const call = await client.calls(callId).fetch();
+            const remainingRecordings = await call.recordings().list();
+            if (remainingRecordings.length === 0) {
+                await call.remove();
+                await ctx.db.callLog.delete({
+                    where: {
+                        callId
+                    }
+                });
+            }
+        }),
 });

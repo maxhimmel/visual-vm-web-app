@@ -1,4 +1,5 @@
 import { api, HydrateClient } from "@/trpc/server";
+import { redirect } from "next/navigation";
 
 export default async function Voicemails() {
   const recordings = await api.voice.getRecordings();
@@ -37,16 +38,41 @@ export default async function Voicemails() {
             </form>
 
             <div>
-              <h2 className="text-4xl">Recordings</h2>
-              <ul className="space-y-4">
+              <h2 className="mb-8 text-4xl">Recordings</h2>
+              <ul className="space-y-8">
                 {recordings.map((recording) => (
-                  <li key={recording.callId}>
-                    <audio controls>
-                      <source
-                        src={`${recording.mediaUrl}.mp3`}
-                        type="audio/mp3"
-                      />
-                    </audio>
+                  <li
+                    key={recording.recordingId}
+                    className="flex flex-col space-y-4 rounded-xl bg-neutral p-4 text-neutral-content"
+                  >
+                    <div className="flex flex-row space-x-4">
+                      <audio controls>
+                        <source
+                          src={`${recording.mediaUrl}.mp3`}
+                          type="audio/mp3"
+                        />
+                      </audio>
+
+                      <form
+                        className="flex items-center rounded-full bg-white px-3 text-neutral"
+                        action={async (formData) => {
+                          "use server";
+
+                          console.log("Deleting recording...");
+                          await api.account.deleteVoicemail({
+                            recordingId: recording.recordingId,
+                          });
+                          console.log("Recording deleted.");
+
+                          // refresh the page
+                          redirect("/vm");
+                        }}
+                      >
+                        <button type="submit" className="btn btn-ghost btn-sm">
+                          Delete
+                        </button>
+                      </form>
+                    </div>
                     <code>{recording.transcript}</code>
                   </li>
                 ))}
