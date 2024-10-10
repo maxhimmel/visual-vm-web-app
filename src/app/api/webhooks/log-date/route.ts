@@ -1,5 +1,6 @@
 import { env } from "@/env";
 import { TwimlHelpers } from "@/lib/twimlHelpers";
+import { db } from "@/server/db";
 import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
 import { z } from "zod";
@@ -12,7 +13,6 @@ const gatherRequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
     const formData = await request.formData();
-
     const data = gatherRequestSchema.safeParse(
         Object.fromEntries(formData)
     );
@@ -30,8 +30,23 @@ export async function POST(request: NextRequest) {
         twiml.hangup();
     }
     else {
+        const approxDate = parseDate(data.data.SpeechResult);
+
+        console.log({ approxDate });
+
+        // we don't need to wait for this to finish ...
+        db.callLog.update({
+            where: {
+                callId: data.data.CallSid
+            },
+            data: {
+                approxDate
+            }
+        });
+
         twiml.record({
             recordingStatusCallback: `${env.API_URL}/webhooks/record`,
+            transcribeCallback: `${env.API_URL}/webhooks/transcribe`,
             maxLength: 120, // Twilio's max transcription length.
             playBeep: false,
             transcribe: true,
@@ -44,4 +59,12 @@ export async function POST(request: NextRequest) {
         twiml.toString(),
         { headers: { "Content-Type": "text/xml" } }
     );
+}
+
+function parseDate(gatherData: string) {
+    const token = "received";
+    const receivedIndex = gatherData.indexOf(token);
+    const approxDate = gatherData.slice(receivedIndex + token.length).trim();
+
+    return approxDate;
 }
