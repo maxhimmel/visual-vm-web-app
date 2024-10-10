@@ -72,5 +72,5 @@ model CallLog {
     id     String @id @default(auto()) @map("_id") @db.ObjectId
     callId String
     User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @db.ObjectId
+    userId String @db.ObjectId
 }
