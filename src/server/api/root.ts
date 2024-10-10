@@ -1,4 +1,5 @@
 import { accountRouter } from "@/server/api/routers/accountRouter";
+import { adminRouter } from "@/server/api/routers/adminRouter";
 import { voiceRouter } from "@/server/api/routers/voiceRouter";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
@@ -9,6 +10,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   account: accountRouter,
+  admin: adminRouter,
   voice: voiceRouter
 });
 
