@@ -4,8 +4,6 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { Twilio, twiml as TWIML } from "twilio";
 import { RecordingInstance } from "twilio/lib/rest/api/v2010/account/recording";
 
-const apiDomain = "ngrok";
-
 export const voiceRouter = createTRPCRouter({
     callUser: protectedProcedure
         .mutation(async ({ ctx }) => {
@@ -63,7 +61,7 @@ export const voiceRouter = createTRPCRouter({
                 twiml,
                 gatherDelay: 2,
                 gatherHints: "new message",
-                recordingAction: `${apiDomain}/api/webhooks/delete-voicemail`
+                recordingAction: `${env.API_URL}/webhooks/delete-voicemail`
             });
 
             const call = await client.calls.create({

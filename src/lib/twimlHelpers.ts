@@ -1,8 +1,8 @@
+import { env } from "@/env";
 import { twiml as TWIML } from "twilio";
 
-const apiDomain = "ngrok";
-const recordingCallback = `${apiDomain}/api/webhooks/record`;
-const transcriptionCallback = `${apiDomain}/api/webhooks/transcribe`;
+const recordingCallback = `${env.API_URL}/webhooks/record`;
+const transcriptionCallback = `${env.API_URL}/webhooks/transcribe`;
 
 export class TwimlHelpers {
     static record({

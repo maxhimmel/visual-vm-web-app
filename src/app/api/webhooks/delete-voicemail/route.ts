@@ -1,11 +1,11 @@
+import { env } from "@/env";
 import { TwimlHelpers } from "@/lib/twimlHelpers";
 import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
 import { z } from "zod";
 
-const apiDomain = "ngrok";
-const recordingCallback = `${apiDomain}/api/webhooks/record`;
-const transcriptionCallback = `${apiDomain}/api/webhooks/transcribe`;
+const recordingCallback = `${env.API_URL}/webhooks/record`;
+const transcriptionCallback = `${env.API_URL}/webhooks/transcribe`;
 
 const gatherRequestSchema = z.object({
     SpeechResult: z.string(),
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         input: ["speech"],
         speechTimeout: "auto",
         hints: "message marked for deletion, new message",
-        action: `${apiDomain}/api/webhooks/voicemail`,
+        action: `${env.API_URL}/webhooks/voicemail`,
     });
 
     // twiml.gather({
