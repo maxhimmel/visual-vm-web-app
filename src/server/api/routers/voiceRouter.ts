@@ -26,24 +26,42 @@ export const voiceRouter = createTRPCRouter({
         .query(async ({ ctx }) => {
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
-            const recordingData = [] as {
-                recording: RecordingInstance,
-                transcript: string
-            }[];
+            const callHistory = await ctx.db.callLog.findMany({
+                where: {
+                    userId: ctx.session.user.id
+                }
+            });
+            const callHistoryLookup = new Map(callHistory.map((call) => [call.callId, call]));
 
             const recordings = await client.recordings.list();
-            for (const r of recordings) {
-                const recObj = { recording: r, transcript: "" };
+            const usersRecordings = recordings.filter((recording) => {
+                return callHistoryLookup.has(recording.callSid);
+            });
 
-                const transcriptionData = await r.transcriptions().list();
-                for (const t of transcriptionData) {
-                    recObj.transcript += t.transcriptionText;
-                }
+            const results = [] as {
+                callId: string;
+                mediaUrl: string;
+                transcript: string;
+                duration: string;
+                recordingId: string;
+                transcriptIds: string[];
+            }[];
 
-                recordingData.push(recObj);
+            for (const r of usersRecordings) {
+                const transcriptions = await r.transcriptions().list();
+                const transcript = transcriptions.map((t) => t.transcriptionText).join(" ");
+
+                results.push({
+                    callId: r.callSid,
+                    mediaUrl: r.mediaUrl,
+                    transcript,
+                    duration: r.duration,
+                    recordingId: r.sid,
+                    transcriptIds: transcriptions.map((t) => t.sid)
+                });
             }
 
-            return recordingData;
+            return results;
         }),
 
     dialVoicemail: protectedProcedure

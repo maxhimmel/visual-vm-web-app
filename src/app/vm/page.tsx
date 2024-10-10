@@ -40,10 +40,10 @@ export default async function Voicemails() {
               <h2 className="text-4xl">Recordings</h2>
               <ul className="space-y-4">
                 {recordings.map((recording) => (
-                  <li key={recording.recording.sid}>
+                  <li key={recording.callId}>
                     <audio controls>
                       <source
-                        src={`${recording.recording.mediaUrl}.mp3`}
+                        src={`${recording.mediaUrl}.mp3`}
                         type="audio/mp3"
                       />
                     </audio>
