@@ -34,14 +34,16 @@ export async function POST(request: NextRequest) {
         const approxDate = parseDate(data.data.SpeechResult);
 
         // we don't need to wait for this to finish ...
-        db.callLog.update({
-            where: {
-                callId: data.data.CallSid
-            },
-            data: {
-                approxDate
-            }
-        });
+        void (async () => {
+            await db.callLog.update({
+                where: {
+                    callId: data.data.CallSid
+                },
+                data: {
+                    approxDate
+                }
+            });
+        })();
 
         twiml.record({
             recordingStatusCallback: `${env.API_URL}/webhooks/record`,
