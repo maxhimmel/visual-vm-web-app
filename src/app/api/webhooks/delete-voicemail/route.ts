@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         input: ["speech"],
         speechTimeout: "auto",
         hints: "message marked for deletion, new message, received, at",
-        action: `${env.API_URL}/webhooks/log-date`,
+        action: `${env.API_URL}/webhooks/start-recording`,
     });
 
     return new Response(

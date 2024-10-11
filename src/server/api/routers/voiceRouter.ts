@@ -80,7 +80,7 @@ export const voiceRouter = createTRPCRouter({
                 input: ["speech"],
                 speechTimeout: "1",
                 hints: "received, at",
-                action: `${env.API_URL}/webhooks/log-date`,
+                action: `${env.API_URL}/webhooks/start-recording`,
             });
 
             const call = await client.calls.create({
