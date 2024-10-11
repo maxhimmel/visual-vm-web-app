@@ -46,12 +46,7 @@ export default async function Voicemails() {
                     className="flex flex-col space-y-4 rounded-xl bg-neutral p-4 text-neutral-content"
                   >
                     <div className="flex flex-row space-x-4">
-                      <audio controls>
-                        <source
-                          src={`${recording.mediaUrl}.mp3`}
-                          type="audio/mp3"
-                        />
-                      </audio>
+                      <audio controls src={`${recording.mediaUrl}.wav`}></audio>
 
                       <form
                         className="flex items-center rounded-full bg-white px-3 text-neutral"
