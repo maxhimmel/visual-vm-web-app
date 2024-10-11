@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
             recordingStatusCallback: `${env.API_URL}/webhooks/record`,
             transcribeCallback: `${env.API_URL}/webhooks/transcribe`,
             maxLength: 120, // Twilio's max transcription length.
+            timeout: 10,
             playBeep: false,
             transcribe: true,
             trim: "trim-silence",
