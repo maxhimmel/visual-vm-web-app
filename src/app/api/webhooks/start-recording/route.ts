@@ -1,5 +1,4 @@
 import { env } from "@/env";
-import { TwimlHelpers } from "@/lib/twimlHelpers";
 import { db } from "@/server/db";
 import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
@@ -32,24 +31,29 @@ export async function POST(request: NextRequest) {
     }
     else {
         const approxDate = parseDate(data.data.SpeechResult);
+        const recEntryId = crypto.randomUUID();
 
-        // we don't need to wait for this to finish ...
         void (async () => {
             await db.callLog.update({
                 where: {
                     callId: data.data.CallSid
                 },
                 data: {
-                    approxDate
+                    recordings: {
+                        push: {
+                            entryId: recEntryId,
+                            approxDate,
+                        }
+                    }
                 }
             });
         })();
 
         twiml.record({
-            recordingStatusCallback: `${env.API_URL}/webhooks/record`,
-            transcribeCallback: `${env.API_URL}/webhooks/transcribe`,
+            recordingStatusCallback: `${env.API_URL}/webhooks/record?entryId=${recEntryId}`,
+            // Transcribe callback: cool for logging, but not immediately useful. Maybe, when we need to know when ALL operations have completed?
+            // transcribeCallback: `${env.API_URL}/webhooks/transcribe`,
             maxLength: 120, // Twilio's max transcription length.
-            timeout: 10,
             playBeep: false,
             transcribe: true,
             trim: "trim-silence",

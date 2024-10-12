@@ -2,7 +2,6 @@ import { env } from "@/env";
 import { TwimlHelpers } from "@/lib/twimlHelpers";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { Twilio, twiml as TWIML } from "twilio";
-import { RecordingInstance } from "twilio/lib/rest/api/v2010/account/recording";
 
 export const voiceRouter = createTRPCRouter({
     callUser: protectedProcedure
@@ -43,6 +42,7 @@ export const voiceRouter = createTRPCRouter({
                 mediaUrl: string;
                 transcript: string;
                 duration: string;
+                callTime: string;
                 recordingId: string;
                 transcriptIds: string[];
             }[];
@@ -51,11 +51,17 @@ export const voiceRouter = createTRPCRouter({
                 const transcriptions = await r.transcriptions().list();
                 const transcript = transcriptions.map((t) => t.transcriptionText).join(" ");
 
+                // TODO: Is there a way to rewrite this WHOLE method to take advantage
+                // of the callLog.recordings relation?
+                // (Ideally, that could prevent this attrocity of a lookup)
+                const callTime = callHistoryLookup.get(r.callSid)?.recordings.find((rec) => rec.recordingId === r.sid)?.approxDate as string;
+
                 results.push({
                     callId: r.callSid,
                     mediaUrl: r.mediaUrl,
                     transcript,
                     duration: r.duration,
+                    callTime,
                     recordingId: r.sid,
                     transcriptIds: transcriptions.map((t) => t.sid)
                 });

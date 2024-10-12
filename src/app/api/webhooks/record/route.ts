@@ -1,3 +1,4 @@
+import { db } from "@/server/db";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -18,12 +19,32 @@ export async function POST(request: NextRequest) {
         Object.fromEntries(formData)
     );
 
-    // retrieve call sid from db
-
-    // update call recording log using call sid to make new entry for
-    // user in db
-    // client.calls.get(data.CallSid).recordings
     console.log("recording", data);
+
+    const entryId = request.nextUrl.searchParams.get("entryId");
+    if (entryId) {
+        void (async () => {
+            await db.callLog.update({
+                where: {
+                    callId: data.CallSid
+                },
+                data: {
+                    recordings: {
+                        updateMany: {
+                            where: {
+                                entryId: entryId
+                            },
+                            data: {
+                                recordingId: data.RecordingSid,
+                            }
+                        }
+                    }
+                }
+            });
+        })();
+    } else {
+        console.error("Cannot log meta data for recording entry without entryId search param.", data);
+    }
 
     return new Response(null, { status: 204 });
 }

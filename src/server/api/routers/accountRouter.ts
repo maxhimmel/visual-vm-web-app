@@ -43,6 +43,8 @@ export const accountRouter = createTRPCRouter({
                 await t.remove();
             }
 
+            // TODO: don't forget to remove the callLog.recordings entry
+
             const callId = recording.callSid;
             const call = await client.calls(callId).fetch();
             const remainingRecordings = await call.recordings().list();

@@ -69,9 +69,15 @@ model Voicemail {
 }
 
 model CallLog {
-    id         String  @id @default(auto()) @map("_id") @db.ObjectId
-    callId     String  @unique
-    approxDate String?
-    User       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId     String  @db.ObjectId
+    id         String      @id @default(auto()) @map("_id") @db.ObjectId
+    callId     String      @unique
+    recordings Recording[]
+    User       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId     String      @db.ObjectId
+}
+
+type Recording {
+    entryId     String
+    approxDate  String // should this be named "createdAt"?
+    recordingId String?
 }
