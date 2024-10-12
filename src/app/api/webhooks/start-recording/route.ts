@@ -68,9 +68,14 @@ function parseDate(gatherData: string) {
     const receivedIndex = gatherData.indexOf(token);
     let approxDate = gatherData.slice(receivedIndex + token.length).trim();
 
-    // replace "today" within the string with the current date
     if (approxDate.includes("today")) {
-        approxDate = approxDate.replace("today", new Date().toLocaleDateString());
+        const today = new Date();
+        approxDate = approxDate.replace("today", today.toLocaleDateString());
+    }
+    else if (approxDate.includes("yesterday")) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        approxDate = approxDate.replace("yesterday", yesterday.toLocaleDateString());
     }
 
     return approxDate;
