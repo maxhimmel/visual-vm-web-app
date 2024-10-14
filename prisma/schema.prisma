@@ -76,6 +76,8 @@ model CallLog {
     userId     String      @db.ObjectId
 }
 
+// TODO: Should this actually be its own table w/relation to the call log?
+// Would that handle when ALL the recordings for a log are deleted the log is cascade deleted, too?
 type Recording {
     entryId     String
     approxDate  String // should this be named "createdAt"?
