@@ -1,4 +1,4 @@
-import { db } from "@/server/db";
+import { appDb } from "@/server/db";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -24,22 +24,10 @@ export async function POST(request: NextRequest) {
     const entryId = request.nextUrl.searchParams.get("entryId");
     if (entryId) {
         void (async () => {
-            await db.callLog.update({
-                where: {
-                    callId: data.CallSid
-                },
-                data: {
-                    recordings: {
-                        updateMany: {
-                            where: {
-                                entryId: entryId
-                            },
-                            data: {
-                                recordingId: data.RecordingSid,
-                            }
-                        }
-                    }
-                }
+            await appDb.addRecordingLookup({
+                callId: data.CallSid,
+                entryId: entryId,
+                recordingId: data.RecordingSid,
             });
         })();
     } else {

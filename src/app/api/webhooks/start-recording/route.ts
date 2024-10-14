@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { db } from "@/server/db";
+import { appDb } from "@/server/db"
 import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
 import { z } from "zod";
@@ -30,22 +30,14 @@ export async function POST(request: NextRequest) {
         twiml.hangup();
     }
     else {
-        const approxDate = parseDate(data.data.SpeechResult);
+        const calledAt = parseDate(data.data.SpeechResult);
         const recEntryId = crypto.randomUUID();
 
         void (async () => {
-            await db.callLog.update({
-                where: {
-                    callId: data.data.CallSid
-                },
-                data: {
-                    recordings: {
-                        push: {
-                            entryId: recEntryId,
-                            approxDate,
-                        }
-                    }
-                }
+            await appDb.addRecordingLog({
+                entryId: recEntryId,
+                callId: data.data.CallSid,
+                calledAt,
             });
         })();
 
@@ -68,9 +60,9 @@ export async function POST(request: NextRequest) {
 }
 
 function parseDate(gatherData: string) {
-    const token = "received";
-    const receivedIndex = gatherData.indexOf(token);
-    let approxDate = gatherData.slice(receivedIndex + token.length).trim();
+    const startToken = "received";
+    const receivedIndex = gatherData.indexOf(startToken);
+    let approxDate = gatherData.slice(receivedIndex + startToken.length).trim();
 
     if (approxDate.includes("today")) {
         const today = new Date();

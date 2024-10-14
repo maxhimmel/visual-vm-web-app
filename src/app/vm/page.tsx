@@ -46,7 +46,7 @@ export default async function Voicemails() {
                     className="flex flex-col space-y-4 rounded-xl bg-neutral p-4 text-neutral-content"
                   >
                     <div className="flex flex-row items-baseline space-x-4">
-                      <p className="font-extralight">{recording.callTime}</p>
+                      <p className="font-extralight">{recording.calledAt}</p>
                       <p className="text-sm font-thin">
                         {recording.duration} seconds
                       </p>

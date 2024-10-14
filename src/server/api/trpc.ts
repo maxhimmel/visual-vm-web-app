@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
-import { db } from "@/server/db";
+import { appDb } from "@/server/db";
 
 /**
  * 1. CONTEXT
@@ -30,7 +30,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await getServerAuthSession();
 
   return {
-    db,
+    db: appDb,
     session,
     ...opts,
   };
@@ -125,17 +125,10 @@ export const protectedProcedure = t.procedure
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    const voicemail = await ctx.db.voicemail.findUnique({
-      where: {
-        userId: ctx.session.user.id,
-      },
-    });
-
     return next({
       ctx: {
         // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
-        voicemail,
       },
     });
   });
