@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { appDb } from "@/server/db"
+import { vmService } from "@/server/db"
 import { NextRequest } from "next/server";
 import { twiml as TWIML } from "twilio";
 import { z } from "zod";
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         const recEntryId = crypto.randomUUID();
 
         void (async () => {
-            await appDb.addRecordingLog({
+            await vmService.addRecordingLog({
                 entryId: recEntryId,
                 callId: data.data.CallSid,
                 calledAt,

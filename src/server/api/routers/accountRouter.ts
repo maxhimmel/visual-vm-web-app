@@ -4,7 +4,7 @@ import { z } from "zod";
 export const accountRouter = createTRPCRouter({
     getVoicemail: protectedProcedure
         .query(async ({ ctx }) => {
-            return await ctx.db.getVoicemailCredentials(ctx.session.user.id);
+            return await ctx.vmService.getVoicemailCredentials(ctx.session.user.id);
         }),
 
     setVoicemail: protectedProcedure
@@ -14,7 +14,7 @@ export const accountRouter = createTRPCRouter({
             voicemailPin: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            return await ctx.db.createVoicemailCredentials({
+            return await ctx.vmService.createVoicemailCredentials({
                 userId: ctx.session.user.id,
                 userNumber: input.userNumber,
                 vmNumber: input.voicemailNumber,
@@ -27,11 +27,11 @@ export const accountRouter = createTRPCRouter({
             recordingId: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            await ctx.db.deleteRecording(input.recordingId);
+            await ctx.vmService.deleteRecording(input.recordingId);
         }),
 
     getRecordings: protectedProcedure
         .query(async ({ ctx }) => {
-            return await ctx.db.getVoicemails(ctx.session.user.id);
+            return await ctx.vmService.getVoicemails(ctx.session.user.id);
         }),
 });

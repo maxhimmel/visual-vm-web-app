@@ -14,7 +14,7 @@ export const voiceRouter = createTRPCRouter({
             twiml.say("I am leaving me a voicemail. Rabbits with Alice in Wonderland. No internet lifestyle, baby.");
             twiml.hangup();
 
-            const voicemail = await ctx.db.getVoicemailCredentials(ctx.session.user.id);
+            const voicemail = await ctx.vmService.getVoicemailCredentials(ctx.session.user.id);
             await client.calls.create({
                 from: env.TWILIO_PHONE_NUMBER,
                 to: `+1${voicemail?.userNumber}`,
@@ -24,7 +24,7 @@ export const voiceRouter = createTRPCRouter({
 
     dialVoicemail: protectedProcedure
         .mutation(async ({ ctx }) => {
-            const voicemail = await ctx.db.getVoicemailCredentials(ctx.session.user.id);
+            const voicemail = await ctx.vmService.getVoicemailCredentials(ctx.session.user.id);
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
             let twiml = new TWIML.VoiceResponse();
@@ -49,7 +49,7 @@ export const voiceRouter = createTRPCRouter({
                 // timeLimit: 180, // for testing to make sure it doesn't run forever
             });
 
-            const log = await ctx.db.createCallLog({
+            const log = await ctx.vmService.createCallLog({
                 userId: ctx.session.user.id,
                 callId: call.sid,
             });

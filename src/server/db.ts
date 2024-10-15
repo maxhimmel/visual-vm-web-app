@@ -23,7 +23,7 @@ if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 /* --- */
 
 
-export const appDb = new VoicemailService(
+export const vmService = new VoicemailService(
   db,
   new TwilioStorage()
 ) as AppService;

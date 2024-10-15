@@ -1,4 +1,4 @@
-import { appDb } from "@/server/db";
+import { vmService } from "@/server/db";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const entryId = request.nextUrl.searchParams.get("entryId");
     if (entryId) {
         void (async () => {
-            await appDb.addRecordingLookup({
+            await vmService.addRecordingLookup({
                 callId: data.CallSid,
                 entryId: entryId,
                 recordingId: data.RecordingSid,
