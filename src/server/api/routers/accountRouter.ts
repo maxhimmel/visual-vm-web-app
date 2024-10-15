@@ -22,11 +22,16 @@ export const accountRouter = createTRPCRouter({
             });
         }),
 
-    deleteVoicemail: protectedProcedure
+    deleteRecording: protectedProcedure
         .input(z.object({
             recordingId: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
             await ctx.db.deleteRecording(input.recordingId);
+        }),
+
+    getRecordings: protectedProcedure
+        .query(async ({ ctx }) => {
+            return await ctx.db.getVoicemails(ctx.session.user.id);
         }),
 });

@@ -2,7 +2,7 @@ import { api, HydrateClient } from "@/trpc/server";
 import { redirect } from "next/navigation";
 
 export default async function Voicemails() {
-  const recordings = await api.voice.getRecordings();
+  const recordings = await api.account.getRecordings();
 
   return (
     <HydrateClient>
@@ -60,7 +60,7 @@ export default async function Voicemails() {
                           "use server";
 
                           console.log("Deleting recording...");
-                          await api.account.deleteVoicemail({
+                          await api.account.deleteRecording({
                             recordingId: recording.recordingId,
                           });
                           console.log("Recording deleted.");

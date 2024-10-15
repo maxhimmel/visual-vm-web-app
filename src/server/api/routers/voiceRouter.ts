@@ -22,11 +22,6 @@ export const voiceRouter = createTRPCRouter({
             });
         }),
 
-    getRecordings: protectedProcedure
-        .query(async ({ ctx }) => {
-            return await ctx.db.getVoicemails(ctx.session.user.id);
-        }),
-
     dialVoicemail: protectedProcedure
         .mutation(async ({ ctx }) => {
             const voicemail = await ctx.db.getVoicemailCredentials(ctx.session.user.id);
