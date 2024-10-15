@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 
 import { env } from "@/env";
-import { VoicemailDb } from "@/server/database/voicemailDB";
+import { VoicemailService } from "@/server/services/voicemailService";
 import { TwilioStorage } from "@/server/storage/twilioStorage";
-import { AppDb } from "@/server/database/appDb";
+import { AppService } from "@/server/services/appService";
 
 const createPrismaClient = () =>
   new PrismaClient({
@@ -23,7 +23,7 @@ if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 /* --- */
 
 
-export const appDb = new VoicemailDb(
+export const appDb = new VoicemailService(
   db,
   new TwilioStorage()
-) as AppDb;
+) as AppService;

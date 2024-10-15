@@ -11,7 +11,7 @@ export type VmRecording = {
     calledAt: string;
 }
 
-export abstract class AppDb {
+export abstract class AppService {
     protected db: PrismaClient;
     protected storage: AppStorage;
 

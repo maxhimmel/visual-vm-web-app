@@ -1,6 +1,6 @@
-import { AppDb, VmCredentials, VmRecording } from "@/server/database/appDb";
+import { AppService, VmCredentials, VmRecording } from "@/server/services/appService";
 
-export class VoicemailDb extends AppDb {
+export class VoicemailService extends AppService {
     async createVoicemailCredentials(credentials: VmCredentials) {
         await this.db.voicemail.create({
             data: credentials
