@@ -52,7 +52,11 @@ export default async function Voicemails() {
                       </p>
                     </div>
                     <div className="flex flex-row space-x-4">
-                      <audio controls src={`${recording.mediaUrl}.wav`}></audio>
+                      <audio
+                        className="-mx-1"
+                        controls
+                        src={`${recording.mediaUrl}.wav`}
+                      ></audio>
 
                       <form
                         className="flex items-center rounded-full bg-white px-3 text-neutral"
