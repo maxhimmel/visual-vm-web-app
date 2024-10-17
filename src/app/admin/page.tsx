@@ -10,6 +10,20 @@ export default async function Admin() {
               action={async (formData) => {
                 "use server";
 
+                console.log("Dialing user...");
+                await api.admin.callUser();
+                console.log("Dialed user.");
+              }}
+            >
+              <button type="submit" className="btn btn-accent btn-lg">
+                Call User
+              </button>
+            </form>
+
+            <form
+              action={async (formData) => {
+                "use server";
+
                 console.log("Deleting all recordings...");
                 await api.admin.deleteRecordings();
                 console.log("Recordings deleted.");

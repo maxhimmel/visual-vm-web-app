@@ -23,20 +23,6 @@ export default async function Voicemails() {
               </button>
             </form>
 
-            <form
-              action={async (formData) => {
-                "use server";
-
-                console.log("Dialing user...");
-                await api.voice.callUser();
-                console.log("Dialed user.");
-              }}
-            >
-              <button type="submit" className="btn btn-ghost btn-lg">
-                Call User
-              </button>
-            </form>
-
             <div>
               <h2 className="mb-8 text-4xl">Recordings</h2>
               <ul className="space-y-8">
