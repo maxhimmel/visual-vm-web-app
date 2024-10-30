@@ -123,14 +123,17 @@ export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx, next }) => {
     if (!ctx.session || !ctx.session.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        cause: "User is not logged in"
+      });
     }
 
     const email = ctx.session.user.email;
     if (!email) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
-        message: "User does not have an email address",
+        cause: "User does not have an email address",
       });
     }
 
@@ -141,7 +144,7 @@ export const protectedProcedure = t.procedure
     if (!validUser) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
-        message: "User is not whitelisted",
+        cause: "User is not whitelisted",
       });
     }
 
