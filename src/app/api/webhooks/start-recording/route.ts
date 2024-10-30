@@ -33,13 +33,14 @@ export async function POST(request: NextRequest) {
         const calledAt = parseDate(data.data.SpeechResult);
         const recEntryId = crypto.randomUUID();
 
-        void (async () => {
+        (async () => {
             await vmService.addRecordingLog({
                 entryId: recEntryId,
                 callId: data.data.CallSid,
                 calledAt,
             });
-        })();
+        })().then(() => console.log("Recording log added."))
+            .catch((err) => console.error("Failed to add recording log.", err));
 
         twiml.record({
             recordingStatusCallback: `${env.API_URL}/webhooks/record?entryId=${recEntryId}`,
