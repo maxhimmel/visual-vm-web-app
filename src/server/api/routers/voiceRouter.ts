@@ -7,14 +7,18 @@ export const voiceRouter = createTRPCRouter({
     dialVoicemail: protectedProcedure
         .mutation(async ({ ctx }) => {
             const voicemail = await ctx.vmService.getVoicemailCredentials(ctx.session.user.id);
+            if (!voicemail || !voicemail.userNumber || !voicemail.vmPin) {
+                throw new Error("Voicemail not set up");
+            }
+
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
             let twiml = new TWIML.VoiceResponse();
 
             twiml = TwimlHelpers.loginVm({
                 twiml,
-                userNumber: voicemail?.userNumber!,
-                vmPin: voicemail?.vmPin!
+                userNumber: voicemail.userNumber,
+                vmPin: voicemail.vmPin
             });
 
             twiml.gather({
