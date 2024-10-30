@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
-import { vmService } from "@/server/db";
+import { db, vmService } from "@/server/db";
 
 /**
  * 1. CONTEXT
@@ -30,6 +30,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await getServerAuthSession();
 
   return {
+    db,
     vmService,
     session,
     ...opts,
@@ -123,6 +124,25 @@ export const protectedProcedure = t.procedure
   .use(async ({ ctx, next }) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    const email = ctx.session.user.email;
+    if (!email) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User does not have an email address",
+      });
+    }
+
+    const validUser = await ctx.db.whiteListedUser.findUnique({
+      where: { email },
+    });
+
+    if (!validUser) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User is not whitelisted",
+      });
     }
 
     return next({
