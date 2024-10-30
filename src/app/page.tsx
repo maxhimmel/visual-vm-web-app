@@ -50,17 +50,17 @@ async function SignedInPrompt() {
           action={async (formData) => {
             "use server";
 
-            let { userNumber, vmNumber, vmPin } = voicemailFormSchema.parse(
+            const data = voicemailFormSchema.parse(
               Object.fromEntries(formData),
             );
 
-            userNumber = userNumber.replaceAll("-", "");
-            vmNumber = vmNumber.replaceAll("-", "");
+            const userNumber = data.userNumber.replaceAll("-", "");
+            const vmNumber = data.vmNumber.replaceAll("-", "");
 
             await api.account.setVoicemail({
               userNumber,
               voicemailNumber: vmNumber,
-              voicemailPin: vmPin,
+              voicemailPin: data.vmPin,
             });
 
             redirect("/vm");

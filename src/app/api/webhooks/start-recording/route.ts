@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         return new Response(null, { status: 400 });
     }
 
-    let twiml = new TWIML.VoiceResponse();
+    const twiml = new TWIML.VoiceResponse();
 
     if (data.data.SpeechResult.includes("main menu")) {
         console.log("hanging up. goodbye.");
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     return new Response(
-        twiml.toString(),
+        twiml.toString() as string,
         { headers: { "Content-Type": "text/xml" } }
     );
 }

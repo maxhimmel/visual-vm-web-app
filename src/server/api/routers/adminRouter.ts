@@ -7,18 +7,24 @@ export const adminRouter = createTRPCRouter({
         .mutation(async ({ ctx }) => {
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
-            client.transcriptions.each(async (transcription) => {
-                await transcription.remove();
+            const removals: Promise<boolean>[] = [];
+            client.transcriptions.each(transcription => {
+                removals.push(transcription.remove());
             });
+
+            await Promise.all(removals);
         }),
 
     deleteRecordings: protectedProcedure
         .mutation(async ({ ctx }) => {
             const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
-            client.recordings.each(async (recording) => {
-                await recording.remove();
+            const removals: Promise<boolean>[] = [];
+            client.recordings.each(recording => {
+                removals.push(recording.remove());
             });
+
+            await Promise.all(removals);
         }),
 
     callUser: protectedProcedure

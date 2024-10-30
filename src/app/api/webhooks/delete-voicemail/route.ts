@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     });
 
     return new Response(
-        twiml.toString(),
+        twiml.toString() as string,
         { headers: { "Content-Type": "text/xml" } }
     );
 }

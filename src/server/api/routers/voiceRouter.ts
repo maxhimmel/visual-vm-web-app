@@ -13,8 +13,8 @@ export const voiceRouter = createTRPCRouter({
 
             twiml = TwimlHelpers.loginVm({
                 twiml,
-                userNumber: voicemail?.userNumber as string,
-                vmPin: voicemail?.vmPin as string
+                userNumber: voicemail?.userNumber!,
+                vmPin: voicemail?.vmPin!
             });
 
             twiml.gather({
