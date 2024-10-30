@@ -7,7 +7,7 @@ export const voiceRouter = createTRPCRouter({
     dialVoicemail: protectedProcedure
         .mutation(async ({ ctx }) => {
             const voicemail = await ctx.vmService.getVoicemailCredentials(ctx.session.user.id);
-            if (!voicemail || !voicemail.userNumber || !voicemail.vmPin) {
+            if (!voicemail?.userNumber || !voicemail?.vmPin) {
                 throw new Error("Voicemail not set up");
             }
 
