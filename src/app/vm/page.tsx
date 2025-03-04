@@ -64,7 +64,7 @@ export default async function Voicemails() {
                         </button>
                       </form>
                     </div>
-                    <code>{recording.transcript}</code>
+                    <code className="blur-sm">{recording.transcript}</code>
                   </li>
                 ))}
               </ul>
