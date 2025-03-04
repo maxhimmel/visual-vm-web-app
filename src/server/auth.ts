@@ -52,10 +52,13 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
-    Google({
-      clientId: env.GOOGLE_CLIENT_ANDROID_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
+    // Google({
+    //   clientId: env.GOOGLE_CLIENT_ANDROID_ID,
+    //   clientSecret: env.GOOGLE_CLIENT_SECRET,
+    //   client: {
+    //     redirect_uris: ["appscheme://auth"], // ???
+    //   }
+    // }),
     /**
      * ...add more providers here.
      *
