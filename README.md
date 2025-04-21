@@ -8,8 +8,6 @@
 
 **Created by [Max Himmel](https://www.linkedin.com/in/maxhimmel/)**
 
-#### [DEMO HERE](https://visual-vm-web-app.vercel.app/)
-
 </div>
 
 ## :pencil: Description
@@ -40,8 +38,6 @@ So! **What if I created a service that dials my voicemail number**, listens for 
 
 ## :art: References
 
-- [https://visual-vm-web-app.vercel.app/](https://visual-vm-web-app.vercel.app/)
-
 - [T3 Stack (Next.js, tRPC, ORM, Auth)](https://create.t3.gg/)
 
 - [Twilio Voice API](https://www.twilio.com/docs/voice)
@@ -49,7 +45,7 @@ So! **What if I created a service that dials my voicemail number**, listens for 
 ## :fast_forward: Upcoming Features
 
 - [ ] React Native for mobile?!
-  
+
   - [ ] Query voicemail when a call is missed (instead of manually pressing "dial" to convert voicemails)
 
   - [ ] Nx mono repo
